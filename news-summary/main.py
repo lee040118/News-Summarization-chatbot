@@ -25,7 +25,8 @@ def replace_all(text, dic):
     return text
 
 def preprocessing_div_contents(x):
-    find_re = {"find_tag" : r"<[a-zA-z0-9]+",
+    find_re = {
+    "find_icon" : r"ⓒ[.]+",
     "find_reporter" : r"[가-힣]{2,4} ([가-힣])*기자",
     "find_email" : r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+',
     "find_things" : r'\[.+?\]',
@@ -33,10 +34,10 @@ def preprocessing_div_contents(x):
      "find_spaces" : r"  +"}
 
     main_contents = ' '.join(str(x).split('\n')[8:-2])
-
-    inner_tags = list(map(lambda x: x[1:], re.findall(find_re['find_tag'], str(main_contents))))
+    inner_tags = list(map(lambda x: x[1:], re.findall(r"<[a-zA-z0-9]+", str(main_contents))))
 
     for tag in inner_tags:
+        if tag == 'span': continue
         try:
             eval(f"x.{tag}.decompose()")
         except:
@@ -44,6 +45,17 @@ def preprocessing_div_contents(x):
 
     final_contents = str(x).split('\n')[-3]
     result = replace_all(final_contents, find_re)
+    tmp = ""
+    flag = False
+    for i in result:
+        if i == '<':
+            flag = True
+            continue
+        elif not flag:
+            tmp += i
+        elif i == '>':
+            flag = False
+    result = tmp
     result = '다.'.join(result.split('다.')[:-1]) + '다.'
 
     return result.strip()
@@ -52,13 +64,18 @@ def crawling(news_type):
     def get_news_info_df(news_type):
         title = driver.find_element_by_xpath('//*[@id="articleTitle"]').text
         date = driver.find_element_by_xpath('//*[@id="main_content"]/div[1]/div[3]/div/span[1]').text
+        p = re.compile(r'[0-9]+.[0-9]+.[0-9]+')
+        if p.match(date) is None:
+            date = driver.find_element_by_xpath('//*[@id="main_content"]/div[1]/div[3]/div/span[2]').text
+
         contents = driver.find_element_by_xpath('//*[@id="articleBodyContents"]').text
 
         req = driver.page_source
         soup = BeautifulSoup(req, 'html.parser')
         pre_contents = soup.select("#articleBodyContents")[0]
+        # pre_contents = soup.select("#articleBodyContents")[0].text
+        # print(pre_contents)
         pre_contents = preprocessing_div_contents(pre_contents)
-
         image_url = get_poster_url()
         news_url = driver.current_url
         df = pd.DataFrame([news_type, title, date, contents, pre_contents, image_url, news_url]).T
@@ -81,7 +98,6 @@ def crawling(news_type):
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('window-size=1920x1080')
     options.add_argument("--disable-gpu")
-    # 혹은 options.add_argument("--disable-gpu")
     driver = webdriver.Chrome('/tmp/chatbot/chromedriver', options=options)
     driver.get(_url)
 
@@ -113,7 +129,7 @@ def crawling(news_type):
             data_list.append(get_news_info_df(news_type))
             driver.back()
 
-    driver.close()
+    driver.quit()
     all_data = pd.concat(data_list)
     return all_data
 
