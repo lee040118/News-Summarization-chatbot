@@ -16,7 +16,6 @@ def normalize_answer(s):
 def abs_summary(model,sentence,tokenizer, device):
     model.to(device)
     model.eval()
-    sentence = normalize_answer(sentence)
     with torch.no_grad():
         test_doc = [tokenizer.encode_plus(sentence, add_special_tokens=True,
                                           max_length=1024,
@@ -29,7 +28,7 @@ def abs_summary(model,sentence,tokenizer, device):
         # Generate Summarizaion
         summary_ids = model.generate(test_doc,
                                      num_beams=5,
-                                     no_repeat_ngram_size=4,
+                                     no_repeat_ngram_size=2,
                                      temperature=1.0, top_k=-1, top_p=-1,
                                      length_penalty=1.0, min_length=1,
                                      max_length=64
@@ -38,11 +37,15 @@ def abs_summary(model,sentence,tokenizer, device):
         # Summarization Preprocessing
         output = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         k = output.split('다.')
-        for sent in range(len(k) - 1):
-            k[sent] = k[sent] + "다."
-        output = k[:-1]
+        text_summary=""
+        if len(k) == 1 :
+            text_summary = k[0]+"다."
+        else:
+            for sent in range(len(k) - 1):
+                k[sent] = k[sent] + "다."
+                text_summary +=k[sent]
 
-        return output
+        return text_summary
 
 def qa_span_fact(doc, corrupt):
     # print(corrupt)
@@ -71,7 +74,7 @@ def qa_span_fact(doc, corrupt):
             sp += len(ans[0])
             # print("predict : {}".format(ans[0]))
             # print("swaping : {}".format(swap_sum))
-            print()
+            # print()
         else:
             sp += len(tar)
 

@@ -45,6 +45,7 @@ def preprocessing_div_contents(x):
 
     final_contents = str(x).split('\n')[-3]
     result = replace_all(final_contents, find_re)
+
     tmp = ""
     flag = False
     for i in result:
@@ -73,8 +74,6 @@ def crawling(news_type):
         req = driver.page_source
         soup = BeautifulSoup(req, 'html.parser')
         pre_contents = soup.select("#articleBodyContents")[0]
-        # pre_contents = soup.select("#articleBodyContents")[0].text
-        # print(pre_contents)
         pre_contents = preprocessing_div_contents(pre_contents)
         image_url = get_poster_url()
         news_url = driver.current_url
