@@ -10,9 +10,6 @@ from transformers import (
     ElectraTokenizer,
 )
 def normalize_answer(s):
-    # s = re.sub("“", "", s)
-    # s = re.sub("\"", "", s)
-    # s = re.sub("”", "", s)
     s = " ".join(re.split(r"\s+", s))
     return s
 
@@ -40,7 +37,10 @@ def abs_summary(model,sentence,tokenizer, device):
 
         # Summarization Preprocessing
         output = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-        output = output[:len(output) - output[::-1].find('.')]
+        k = output.split('다.')
+        for sent in range(len(k) - 1):
+            k[sent] = k[sent] + "다."
+        output = k[:-1]
 
         return output
 
@@ -71,7 +71,7 @@ def qa_span_fact(doc, corrupt):
             sp += len(ans[0])
             # print("predict : {}".format(ans[0]))
             # print("swaping : {}".format(swap_sum))
-            # print()
+            print()
         else:
             sp += len(tar)
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     """Abs_summary"""
     model = get_kobart_for_conditional_generation()
-    model.load_state_dict(torch.load("/tmp/chatbot/model/sd2.pt"))
+    model.load_state_dict(torch.load("/tmp/chatbot/model/L3.pt"))
     tokenizer = get_kobart_tokenizer()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
