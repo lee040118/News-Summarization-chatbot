@@ -98,35 +98,78 @@ def crawling(news_type):
     options.add_argument('window-size=1920x1080')
     options.add_argument("--disable-gpu")
     driver = webdriver.Chrome('/tmp/chatbot/chromedriver', options=options)
-    driver.get(_url)
-
+    # driver.get(_url)
+    _url = 'https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1='
     if news_type == 'today_main_news':
-        try:
-            driver.find_element_by_xpath('//*[@id="today_main_news"]/div[2]/div/div[1]/a[1]').click()
-            driver.implicitly_wait(2)
-            data_list.append(get_news_info_df(news_type))
-            driver.back()
+       pass
+    elif news_type == 'section_politics':
+        try :
+            t_url = _url + '100'
+            driver.get(t_url)
         except:
-            driver.get(_url)
-        for i in range(1, 5):
-            driver.find_element_by_xpath('//*[@id="' + news_type + '"]/div[2]/ul/li[' + str(i) + ']/div[1]/a').click()
-            driver.implicitly_wait(2)
-            data_list.append(get_news_info_df(news_type))
-            driver.back()
-    else:
-        try:
-            driver.find_element_by_xpath('//*[@id="' + news_type + '"]/div[2]/dl/dt/a').click()
-            driver.implicitly_wait(2)
-            data_list.append(get_news_info_df(news_type))
-            driver.back()
+            pass
+    elif news_type == 'section_economy':
+        try :
+            t_url = _url + '101'
+            driver.get(t_url)
         except:
-            driver.get(_url)
+            pass
+    elif news_type == 'section_society':
+        try :
+            t_url = _url + '102'
+            driver.get(t_url)
+        except:
+            pass
+    elif news_type == 'section_life':
+        try :
+            t_url = _url + '103'
+            driver.get(t_url)
+        except:
+            pass
+    elif news_type == 'section_world':
+        try :
+            t_url = _url + '104'
+            driver.get(t_url)
+        except:
+            pass
+    elif news_type == 'section_it':
+        try :
+            t_url = _url + '105'
+            driver.get(t_url)
+        except:
+            pass
+    for i in range(1,6):
+        driver.find_element_by_xpath('//*[@id="main_content"]/div/div[2]/div[1]/div[' + i + ']/div[1]/ul/li[1]/div[2]/a').click()
+        driver.implicitly_wait(2)
+        data_list.append(get_news_info_df(news_type))
+        driver.back()
+    # if news_type == 'today_main_news':
+    #     try:
+    #         driver.find_element_by_xpath('//*[@id="today_main_news"]/div[2]/div/div[1]/a[1]').click()
+    #         driver.implicitly_wait(2)
+    #         data_list.append(get_news_info_df(news_type))
+    #         driver.back()
+    #     except:
+    #         driver.get(_url)
+    #     for i in range(1, 5):
+    #         driver.find_element_by_xpath('//*[@id="' + news_type + '"]/div[2]/ul/li[' + str(i) + ']/div[1]/a').click()
+    #         driver.implicitly_wait(2)
+    #         data_list.append(get_news_info_df(news_type))
+    #         driver.back()
+    # else:
+    #     try:
+    #         driver.find_element_by_xpath('//*[@id="' + news_type + '"]/div[2]/dl/dt/a').click()
+    #         driver.implicitly_wait(2)
+    #         data_list.append(get_news_info_df(news_type))
+    #         driver.back()
+    #     except:
+    #         driver.get(_url)
 
-        for i in range(1, 5):
-            driver.find_element_by_xpath('//*[@id="' + news_type + '"]/div[2]/div/ul/li[' + str(i) + ']/a').click()
-            driver.implicitly_wait(2)
-            data_list.append(get_news_info_df(news_type))
-            driver.back()
+    #     for i in range(1, 5):
+    #         driver.find_element_by_xpath('//*[@id="' + news_type + '"]/div[2]/div/ul/li[' + str(i) + ']/a').click()
+    #         driver.implicitly_wait(2)
+    #         data_list.append(get_news_info_df(news_type))
+    #         driver.back()
 
     driver.quit()
     all_data = pd.concat(data_list)
