@@ -18,8 +18,8 @@ def abs_summary(model,sentence,tokenizer, device):
     model.eval()
     with torch.no_grad():
         test_doc = [tokenizer.encode_plus(sentence, add_special_tokens=True,
-                                          max_length=1024,
-                                          pad_to_max_length=True)["input_ids"]]
+                                          max_length=1024,  truncation=True,
+                                          padding='max_length')["input_ids"]]
 
         # tensor, gpu
         test_doc = torch.tensor(test_doc)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     FILE_TIME = datetime.datetime.now().strftime('%Y%m%d-%H')
     time_objective = f"{FILE_TIME}.csv"
 
-    BASE_DIR = '/tmp/chatbot'
+    BASE_DIR = '/workspace/chatbot/News-Summarization-chatbot/news-summary'
     DATA_DIR = 'crawl_data'
 
     FILE_NAME = time_objective
@@ -108,13 +108,12 @@ if __name__ == "__main__":
 
     """Abs_summary"""
     model = get_kobart_for_conditional_generation()
-    model.load_state_dict(torch.load("/tmp/chatbot/model/L3.pt"))
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.load_state_dict(torch.load("/workspace/chatbot/News-Summarization-chatbot/news-summary/model/L3.pt", map_location=device))
     tokenizer = get_kobart_tokenizer()
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
     """Qa_span"""
-    model_name_or_path = '/tmp/chatbot/model/QA_span'
+    model_name_or_path = '/workspace/chatbot/News-Summarization-chatbot/news-summary/model/QA_span'
     qa_model = FactCorrect(model_name_or_path)
     ner = Pororo(task="ner", lang="ko")
     tok =  ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-discriminator")
