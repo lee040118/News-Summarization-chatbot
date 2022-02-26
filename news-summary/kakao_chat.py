@@ -14,6 +14,7 @@ FILE_TIME = datetime.datetime.now().strftime('%Y%m%d-%H')
 time_objective = f"{FILE_TIME}.csv"
 FILE_NAME = time_objective
 data = pd.read_csv(os.path.join(BASE_DIR, DATA_DIR, FILE_NAME))
+
 def load_data():
     BASE_DIR = '/tmp/chatbot'
     DATA_DIR = 'crawl_data'
@@ -35,7 +36,7 @@ quick_replies = [{
     "messageText": "헤드라인 기사",
     "action": "message",
     "label": "헤드라인 기사"
-},
+    },
     {
         "messageText": "정치 뉴스",
         "action": "message",

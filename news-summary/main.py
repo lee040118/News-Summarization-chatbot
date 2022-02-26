@@ -12,7 +12,7 @@ import json
 
 warnings.filterwarnings(action='ignore')
 
-BASE_DIR = '/workspace/chatbot/News-Summarization-chatbot/news-summary/'
+BASE_DIR = '/workspace/News-Summarization-chatbot/news-summary/'
 DATA_DIR = 'crawl_data'
 
 web = os.path.join(BASE_DIR, 'chromedriver')
@@ -106,7 +106,7 @@ def crawling(news_type):
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('window-size=1920x1080')
     options.add_argument("--disable-gpu")
-    driver = webdriver.Chrome('/workspace/chatbot/News-Summarization-chatbot/news-summary/chromedriver', options=options)
+    driver = webdriver.Chrome('/workspace/News-Summarization-chatbot/news-summary/chromedriver', options=options)
 #     driver.get(_url)
     _url = 'https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1='
     if news_type == 'today_main_news':

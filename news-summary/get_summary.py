@@ -100,7 +100,7 @@ if __name__ == "__main__":
     FILE_TIME = datetime.datetime.now().strftime('%Y%m%d-%H')
     time_objective = f"{FILE_TIME}.csv"
 
-    BASE_DIR = '/workspace/chatbot/News-Summarization-chatbot/news-summary'
+    BASE_DIR = '/workspace/News-Summarization-chatbot/news-summary'
     DATA_DIR = 'crawl_data'
 
     FILE_NAME = time_objective
@@ -109,11 +109,11 @@ if __name__ == "__main__":
     """Abs_summary"""
     model = get_kobart_for_conditional_generation()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.load_state_dict(torch.load("/workspace/chatbot/News-Summarization-chatbot/news-summary/model/L3.pt", map_location=device))
+    model.load_state_dict(torch.load("/workspace/News-Summarization-chatbot/news-summary/model/L3.pt", map_location=device))
     tokenizer = get_kobart_tokenizer()
 
     """Qa_span"""
-    model_name_or_path = '/workspace/chatbot/News-Summarization-chatbot/news-summary/model/QA_span'
+    model_name_or_path = '/workspace/News-Summarization-chatbot/news-summary/model/QA_span'
     qa_model = FactCorrect(model_name_or_path)
     ner = Pororo(task="ner", lang="ko")
     tok =  ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-discriminator")
