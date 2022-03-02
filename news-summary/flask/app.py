@@ -2,32 +2,13 @@ from flask import Flask, request, jsonify
 import sys, os, re
 import datetime
 import pandas as pd
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.jobstores.base import JobLookupError
+from database.postgreslq import CRUD, Databases
+from elk_lib.my_log import back_logger_info
 
 os.system("fuser -k 6006/tcp")
 
 app = Flask(__name__)
-BASE_DIR = '/workspace/News-Summarization-chatbot/news-summary/'
-DATA_DIR = 'crawl_data'
-FILE_TIME = datetime.datetime.now().strftime('%Y%m%d-%H')
-time_objective = f"{FILE_TIME}.csv"
-FILE_NAME = time_objective
-data = pd.read_csv(os.path.join(BASE_DIR, DATA_DIR, FILE_NAME))
 
-def load_data():
-    BASE_DIR = '/workspace/News-Summarization-chatbot/news-summary/'
-    DATA_DIR = 'crawl_data'
-    FILE_TIME = datetime.datetime.now().strftime('%Y%m%d-%H')
-    time_objective = f"{FILE_TIME}.csv"
-    FILE_NAME = time_objective
-    global data
-    data = pd.read_csv(os.path.join(BASE_DIR, DATA_DIR, FILE_NAME))
-
-sched = BackgroundScheduler()
-sched.start()
-
-sched.add_job(load_data, 'cron', minute ="5", id="load")
 
 news_type_list = ['today_main_news', 'section_politics', 'section_economy', 'section_society', 'section_life',
                   'section_world', 'section_it']
@@ -69,7 +50,24 @@ quick_replies = [{
     }
 ]
 
+@app.route('/test')
+def test():
+    back_logger_info('hello world api!')
+    return 'hello'
+
+@app.route('/keyboard')
+def Keyboard():
+    dataSend = {
+    }
+    return jsonify(dataSend)
+
+@app.route('/update')
 def update():
+    back_logger_info('update news')
+    db = CRUD()
+    FILE_TIME = datetime.datetime.now().strftime('%Y%m%d-%H')
+    data = pd.DataFrame(db.readDB(schema='public',table='news_data',colum='*',condition=FILE_TIME), columns=["news_type", "title", "date", "all_contents","contents","image_url","news_url","summary","qa_span","timekey","id"])
+    
     for news_type in news_type_list:
         data_list = []
         for i in range(len(data[data['news_type'] == news_type])):
@@ -80,12 +78,12 @@ def update():
             title = reset_df.loc[i].title
             time = reset_df.loc[i].date
 
-            if type(reset_df.loc[i].qa_span) != float:
-                description = reset_df.loc[i].qa_span
-            else :
-                description = reset_df.loc[i].summary
+            # if reset_df.loc[i].qa_span != None:
+            #     description = reset_df.loc[i].qa_span
+            # else :
+            description = reset_df.loc[i].summary
             # description = reset_df.loc[i].summary
-            description = " ".join(re.split(r"\s+", description))
+            description = " ".join(re.split(r"\s+", str(description)))
 
             imageUrl = reset_df.loc[i].image_url
             webLinkUrl = reset_df.loc[i].news_url
@@ -101,17 +99,7 @@ def update():
             # data_list.append(quick_replies)
 
         all_data_dict[news_type] = data_list
-
-update()
-sched.add_job(update, 'cron', minute ="6", id="update")
-
-
-@app.route('/keyboard')
-def Keyboard():
-    dataSend = {
-    }
-    return jsonify(dataSend)
-
+    return "update success"
 
 @app.route('/message', methods=['POST'])
 def Message():
@@ -119,6 +107,7 @@ def Message():
     content = content['userRequest']
     content = content['utterance']
     
+    back_logger_info(content)
     if content == u"헤드라인 기사":
         dataSend = {
             "version": "2.0",

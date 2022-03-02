@@ -85,14 +85,18 @@ def qa_span_fact(doc, corrupt):
 def main():
     summary = []
     qa_span = []
+    id = []
     for i in (range(len(data))):
         df = data.loc[i].contents
         sum = abs_summary(model, df, tokenizer, device)
         summary.append(sum)
         qa_span.append(qa_span_fact(df, sum))
+        id.append(datetime.datetime.now().strftime('%Y%m%d %H ') + str(i))
 
     data.loc[:,'summary'] = summary
     data.loc[:,'qa_span'] = qa_span
+    data.loc[:,'timekey'] = datetime.datetime.now().strftime('%Y%m%d-%H')
+    data.loc[:,'id'] = id
 
     data.to_csv(os.path.join(BASE_DIR, DATA_DIR, FILE_NAME), index = False)
 
