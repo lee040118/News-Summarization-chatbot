@@ -23,9 +23,11 @@
 
 #### 3. Business Intelligence
 
- 	1. 서버 로그들을 Logstash를 통해 수집 & 파싱 합니다
- 	2. 로그들을 Elasticsearch에 적재후 Kibana를 통해 대시보드를 생성합니다
- 	3. 분석된 로그들을 슬랙 채널에 메시지를 전송합니다
+1. 서버 로그들을 Logstash를 통해 수집 & 파싱 합니다
+
+2. 로그들을 Elasticsearch에 적재후 Kibana를 통해 대시보드를 생성합니다
+
+3. 분석된 로그들을 슬랙 채널에 메시지를 전송합니다
 
 #### 4. Scheduling
 
