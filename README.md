@@ -8,7 +8,7 @@
 
 ### 데이터 파이프라인
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\chatbot.png)
+![](/news-summary/image/chatbot.png)
 
 #### 1. ETL
 
@@ -46,7 +46,7 @@
 
 ##### 요약 모델 개요도 
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\summary_model.png)
+![](/news-summary/image/summary_model.png)
 
 1. Abs Summary 모델을 통해 input으로 들어오는 기사 본문을 상황에 맞게 단어를 생성 또는 추출해 요연한 요약문을 만든다.
 2. Fact Correction 모델은 Abs summary 모델을 통해 만들어진 요약문이 본문 내용과 다른 내용이 생성된 부분을 찾아 post-editing 방식으로 요약문을 수정한다.
@@ -57,7 +57,7 @@ news_data라는 네임으로 DB 테이블을 생성하고 수집 날짜를 id �
 
 ##### 로우 데이터 예시
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\postgre.png)
+![](/news-summary/image/postgre.png)
 
 
 
@@ -65,7 +65,7 @@ news_data라는 네임으로 DB 테이블을 생성하고 수집 날짜를 id �
 
 카카오톡 챗봇을 통해 유저들에게 기사 요약서비스를 제공합니다.
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\example.png) 
+![](/news-summary/image/example.png) 
 
 
 
@@ -83,18 +83,18 @@ news_data라는 네임으로 DB 테이블을 생성하고 수집 날짜를 id �
 
 ##### Discover
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\kibana2.png)
+![](/news-summary/image/kibana2.png)
 
 ##### Dashboard
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\kibana.png)
+![](/news-summary/image/kibana.png)
 
 #### - Notification Bot
 
 1. 엘라스틱 서치에서 오늘 날짜에 해당하는 데이터를 요청하고 데이터를 분석합니다.
 2. 카테고리별 기사 순위 분석하여 슬랙 채널에 전송합니다.
 
-<img src="C:\Users\HOON\Desktop\chatbot\news-summary\image\slack.png" style="zoom: 67%;" /> 
+<img src="/news-summary/image/slack.png" style="zoom: 67%;" /> 
 
 
 
@@ -118,13 +118,13 @@ news_data라는 네임으로 DB 테이블을 생성하고 수집 날짜를 id �
 
 #### - DAG Graph
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\dag1.png)
+![](/news-summary/image/dag1.png)
 
 ![](C:\Users\HOON\Desktop\chatbot\news-summary\image\dag2.png)
 
 #### - Tree View
 
-![](C:\Users\HOON\Desktop\chatbot\news-summary\image\tres.png)
+![](/news-summary/image/tres.png)
 
 ## 프로젝트 결과
 
