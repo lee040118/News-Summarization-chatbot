@@ -107,8 +107,8 @@ def Message():
     content = content['userRequest']
     content = content['utterance']
     
-    back_logger_info(content)
     if content == u"헤드라인 기사":
+        back_logger_info(content)
         dataSend = {
             "version": "2.0",
             "template": {
@@ -124,6 +124,7 @@ def Message():
             }
         }
     elif content == u"정치 뉴스":
+        back_logger_info(content)
         dataSend = {
             "version": "2.0",
             "template": {
@@ -139,6 +140,7 @@ def Message():
             }
         }
     elif content == u"경제 뉴스":
+        back_logger_info(content)
         dataSend = {
             "version": "2.0",
             "template": {
@@ -154,6 +156,7 @@ def Message():
             }
         }
     elif content == u"사회 뉴스":
+        back_logger_info(content)
         dataSend = {
             "version": "2.0",
             "template": {
@@ -169,6 +172,7 @@ def Message():
             }
         }
     elif content == u"생활/문화 뉴스":
+        back_logger_info(content)
         dataSend = {
             "version": "2.0",
             "template": {
@@ -184,6 +188,7 @@ def Message():
             }
         }
     elif content == u"세계 뉴스":
+        back_logger_info(content)
         dataSend = {
             "version": "2.0",
             "template": {
@@ -199,6 +204,7 @@ def Message():
             }
         }
     elif content == u"IT/과학 뉴스":
+        back_logger_info(content)
         dataSend = {
             "version": "2.0",
             "template": {
@@ -214,6 +220,7 @@ def Message():
             }
         }
     else:
+        back_logger_info(content,2)
         dataSend = {
             "version": "2.0",
             "template": {

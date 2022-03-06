@@ -1,8 +1,8 @@
 import psycopg2
-
+import os
 class Databases():
     def __init__(self):
-        self.db = psycopg2.connect(host='211.38.19.229', dbname='airflow',user='lee040118',password='dlqudgns12',port=5432)
+        self.db = psycopg2.connect(host=os.environ['PG_ENDPOINT'], dbname='airflow',user='lee040118',password='dlqudgns12',port=5432)
         self.cursor = self.db.cursor()
 
     def __del__(self):
