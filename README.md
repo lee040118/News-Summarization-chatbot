@@ -98,7 +98,9 @@ news_data라는 네임으로 DB 테이블을 생성하고 수집 날짜를 id �
 
 <img src="/news-summary/image/slack.png" style="zoom: 67%;" /> 
 
+- 에러 message
 
+![](./news-summary/image/slack-1.png)
 
 ### 4. Scheduling
 
