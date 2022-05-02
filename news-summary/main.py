@@ -19,81 +19,47 @@ web = os.path.join(BASE_DIR, 'chromedriver')
 _url = "https://news.naver.com/"
 
 news_type_list = ['today_main_news', 'section_politics', 'section_economy', 'section_society','section_life','section_world','section_it']
-# news_type_list = ['section_politics']
-
 def replace_all(text, dic):
     for j in dic.values():
-        text = re.sub(j, '', text)
+        text = re.sub(j, ' ', text)
     return text
 
-def preprocessing_div_contents(x, tv):
+def preprocessing_div_contents(x):
     find_re = {
-    "find_icon" : r"ⓒ[.]+",
-    "find_reporter" : r"[가-힣]{2,4} ([가-힣])*기자",
-    "find_email" : r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+',
-    "find_things" : r'\[.+?\]',
-    "find_useless_bracket" : r"\( *\)",
-     "find_spaces" : r"  +"}
+        "find_icon" : r"©[.]+",
+        "find_reporter" : r"[가-힣]{2,4} ([가-힣])*기자",
+        "find_email" : r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+',
+        "find_things" : r'\[.+?\]',
+        "find_useless_bracket" : r"\( *\)",
+        "find_n" : r'\n',
+        "find_backslash" : r"\\",
+        "find_spaces" : r"  +"
+    }
 
-    main_contents = ' '.join(str(x).split('\n')[8:-2])
-    inner_tags = list(map(lambda x: x[1:], re.findall(r"<[a-zA-z0-9]+", str(main_contents))))
-    for tag in inner_tags:
-        if tag == 'span': continue
-        try:
-            eval(f"x.{tag}.decompose()")
-        except:
-            pass
-
-    if tv:
-        final_contents = str(x).split('\n')[-1]
-    else:
-        final_contents = str(x).split('\n')[-3]
-    result = replace_all(final_contents, find_re)
-
-    tmp = ""
-    flag = False
-    for i in result:
-        if not flag and i != '<':
-            tmp += i
-        elif i == '<':
-            flag = True
-            continue
-        elif i == '>':
-            flag = False
-    result = tmp
-    result = '다.'.join(result.split('다.')[:-1]) + '다.'
+    result = replace_all(x, find_re)    
 
     return result.strip()
 
 def crawling(news_type):
     def get_news_info_df(news_type):
-        title = driver.find_element_by_xpath('//*[@id="articleTitle"]').text
-        date = driver.find_element_by_xpath('//*[@id="main_content"]/div[1]/div[3]/div/span[1]').text
+        title = driver.find_element_by_xpath('//*[@id="ct"]/div[1]/div[2]/h2').text
+        date = driver.find_element_by_xpath('//*[@id="ct"]/div[1]/div[3]/div[1]/div[1]/span').text
         p = re.compile(r'[0-9]+.[0-9]+.[0-9]+')
         if p.match(date) is None:
-            date = driver.find_element_by_xpath('//*[@id="main_content"]/div[1]/div[3]/div/span[2]').text
+            date = driver.find_element_by_xpath('//*[@id="ct"]/div[1]/div[3]/div[1]/div/span').text
 
-        contents = driver.find_element_by_xpath('//*[@id="articleBodyContents"]').text
-
-        req = driver.page_source
-        soup = BeautifulSoup(req, 'html.parser')
-        skip = soup.select("#main_content > div.article_header > div.press_logo > a > img")[0]
-        pre_contents = soup.select("#articleBodyContents")[0]
-#         print(skip)
-        # if str(skip).find("TV조선") != -1:
-        #     pre_contents = preprocessing_div_contents(pre_contents, True)
-        # else :
-        pre_contents = preprocessing_div_contents(pre_contents, False)
+        pre_contents = driver.find_element_by_xpath('//*[@id="dic_area"]').text
+        contents = preprocessing_div_contents(pre_contents)
         image_url = get_poster_url()
         news_url = driver.current_url
-        df = pd.DataFrame([news_type, title, date, contents, pre_contents, image_url, news_url]).T
+        df = pd.DataFrame([news_type, title, date, pre_contents, contents, image_url, news_url]).T
         df.columns = ['news_type', 'title', 'date', 'all_contents', 'contents', 'image_url', 'news_url']
         return df
 
     def get_poster_url():
         # get the image source
         try:
-                img = driver.find_element_by_class_name('end_photo_org').find_elements_by_tag_name('img')[0]
+                img = driver.find_element_by_xpath('//*[@id="img1"]')
                 src = img.get_attribute('src')
         except:
                 src = "https://newsimg.sedaily.com/2019/01/23/1VE5F3W5WP_18.png"
@@ -107,7 +73,7 @@ def crawling(news_type):
     options.add_argument('window-size=1920x1080')
     options.add_argument("--disable-gpu")
     driver = webdriver.Chrome('/workspace/News-Summarization-chatbot/news-summary/chromedriver', options=options)
-#     driver.get(_url)
+    
     _url = 'https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1='
     if news_type == 'today_main_news':
         try :
@@ -212,6 +178,7 @@ def crawling(news_type):
                     driver.back()
                 except:
                     driver.get(t_url)
+           
     driver.quit()
     return data_list
 

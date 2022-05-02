@@ -1,6 +1,6 @@
 import logging
 import logstash
-
+import os
 '''
 #################################################################################
                     SET LOG FORMAT
@@ -24,7 +24,7 @@ werkzeug = logging.getLogger('werkzeug')
 '''
 web_logger_logstash = logging.getLogger('web logger')
 web_logger_logstash.setLevel(logging.DEBUG)
-stash = logstash.TCPLogstashHandler('211.38.19.229',5001,version=1)
+stash = logstash.TCPLogstashHandler(os.environ['PG_ENDPOINT'],5001,version=1)
 stash.setFormatter(formatter)
 web_logger_logstash.addHandler(stash)
 # web_logger_logstash.disabled = True

@@ -88,7 +88,10 @@ def main():
     id = []
     for i in (range(len(data))):
         df = data.loc[i].contents
-        sum = abs_summary(model, df, tokenizer, device)
+        if df:
+            sum = abs_summary(model, df, tokenizer, device)
+        else:
+            sum = ''
         summary.append(sum)
         qa_span.append(qa_span_fact(df, sum))
         id.append(datetime.datetime.now().strftime('%Y%m%d %H ') + str(i))
