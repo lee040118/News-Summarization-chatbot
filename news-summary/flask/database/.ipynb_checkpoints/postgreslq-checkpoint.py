@@ -1,5 +1,5 @@
 import psycopg2
-
+import os
 class Databases():
     def __init__(self):
         self.db = psycopg2.connect(host='211.38.19.229', dbname='airflow',user='lee040118',password='dlqudgns12',port=5432)
@@ -19,8 +19,8 @@ class Databases():
     
 
 class CRUD(Databases):
-    def insertDB(self,schema,table,colum,data):
-        sql = " INSERT INTO {schema}.{table}({colum}) VALUES ('{data}') ;".format(schema=schema,table=table,colum=colum,data=data)
+    def insertDB(self,schema,table,data):
+        sql = """ INSERT INTO {schema}.{table} VALUES {data};""".format(schema=schema,table=table,data=data)
         try:
             self.cursor.execute(sql)
             self.db.commit()
@@ -36,7 +36,7 @@ class CRUD(Databases):
             result = (" read DB err",e)
         
         return result
-
+    
     def updateDB(self,schema,table,colum,value,condition):
         sql = " UPDATE {schema}.{table} SET {colum}='{value}' WHERE {colum}='{condition}' ".format(schema=schema
         , table=table , colum=colum ,value=value,condition=condition )
@@ -54,4 +54,13 @@ class CRUD(Databases):
             self.db.commit()
         except Exception as e:
             print( "delete DB err", e)
+    
+    def joinDB(self, query):
+        try:
+            self.cursor.execute(query)
+            result = self.cursor.fetchall()
+        except Exception as e :
+            result = (" join DB err",e)
+        
+        return result
             
